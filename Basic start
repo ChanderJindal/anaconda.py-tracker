@@ -1,0 +1,51 @@
+#pip install plotly==4.14.3
+
+
+#pip install pytest-warnings
+
+
+import pandas as pd # for data manupulation/extraction
+import numpy as np  #for numerical
+import plotly.express as px # visulisation 
+import seaborn as sns  # high lvl visulisation
+import warnings #to get rid of warnings 
+warnings.filterwarnings('ignore')
+print("All Done!")
+
+
+global_temp = pd.read_csv('C:/Users/user_name/Desktop/1.Project 1-- Predicting the temperatures-20210618T081950Z-001/1.Project 1-- Predicting the temperatures/GlobalTemperatures.csv') #edit
+
+global_temp.head()
+
+def get_y(date):
+    return date.split('-')[0];
+def get_m(date):
+    return date.split('-')[1];
+def get_d(date):
+    return date.split('-')[2];
+
+print( get_y(global_temp['dt'][0] ) )
+print( get_m(global_temp['dt'][0] ) )
+print( get_d(global_temp['dt'][0] ) )
+
+global_temp["Year"] = global_temp['dt'].apply(get_y);
+global_temp["Month"] = global_temp['dt'].apply(get_m);
+global_temp["Day"] = global_temp['dt'].apply(get_d);
+
+global_temp.head()
+
+data = global_temp.groupby('Year').agg( {'LandAverageTemperature':'mean' , 'LandAverageTemperatureUncertainty':'mean'} ).reset_index()
+# with reset_index other rows are shown
+ # () <- not 100% important
+
+data
+
+data['LandAverageTemperatureUncertainty_TOP'] = data['LandAverageTemperatureUncertainty'] + data['LandAverageTemperature']
+data['LandAverageTemperatureUncertainty_BOTTOM'] = -data['LandAverageTemperatureUncertainty'] + data['LandAverageTemperature']
+
+data.head()
+
+data.columns
+
+
+px.line(data,x='Year',y =['LandAverageTemperature','LandAverageTemperatureUncertainty_TOP','LandAverageTemperatureUncertainty_BOTTOM'],title = 'Avg Land Temp' )
