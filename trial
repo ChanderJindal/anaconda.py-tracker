@@ -84,17 +84,15 @@ Seasonal_Years = pd.DataFrame()
 global_temp['Year'].unique()
 
 for y in global_temp['Year'].unique():
-    temps = [0,0,0,0]
-    if global_temp['Season'] is 'Winter': temps[0] += global_temp['LandAverageTemperature']
-    elif global_temp['Season'] is 'Spring' : temps[1] += global_temp['LandAverageTemperature']
-    elif global_temp['Season'] is 'Summer' : temps[2] += global_temp['LandAverageTemperature']
-    elif global_temp['Season'] is 'Autum' : temps[3] += global_temp['LandAverageTemperature'] # 'Autum'
-    Winter.append( temps[0]/3 )
-    Spring.append( temps[1]/3 )
-    Summer.append( temps[2]/3 )
-    Autum.append( temps[3]/3 )
+    current_df = global_temp[ global_temp['Year'] == y ]
+    Winter.append( current_df[ current_df['Season']=='Winter']['LandAverageTemperature'].mean())
+    Spring.append( current_df[ current_df['Season']=='Spring']['LandAverageTemperature'].mean())
+    Summer.append( current_df[ current_df['Season']=='Summer']['LandAverageTemperature'].mean())
+    Autum.append( current_df[ current_df['Season']=='Autum']['LandAverageTemperature'].mean())
     Year.append(y)
     
+
+current_df
 
 Seasonal_Years['Year'] = Year
 Seasonal_Years['Winter'] = Winter
@@ -106,4 +104,49 @@ Seasonal_Years
 
 Seasonal_Years.dtypes
 
-px.line()
+px.line(Seasonal_Years,x='Year',y=['Winter','Spring','Summer','Autum'],title = 'LandAverageTemperatureBySeasons')
+
+city_temp = pd.read_csv('C:/Users/chand/Desktop/1.Project 1-- Predicting the temperatures-20210618T081950Z-001/1.Project 1-- Predicting the temperatures/GlobalLandTemperaturesByCity.csv')
+
+city_temp.head().reset_index()
+
+city_temp['Country'].unique()
+
+Indian_cities = city_temp[city_temp['Country']=='India']
+
+Indian_cities
+
+Indian_cities['City'].unique()
+
+cities = ['New Delhi','Bombay','Bangalore','Madras','Agra','Ahmadabad','Ajmer','Amritsar','Amravati','Bihar']
+
+Indian_Cities_2 = Indian_cities[Indian_cities['City'].isin(cities) ]
+
+
+Indian_Cities_2
+
+Indian_Cities_2 = Indian_Cities_2[[ 'dt','AverageTemperature' ]]
+
+Indian_Cities_2.columns=['Date','Temperature']
+
+Indian_Cities_2.head()
+
+Indian_Cities_2.dtypes
+
+Indian_Cities_2['Date'] = pd.to_datetime( Indian_Cities_2['Date'] )
+Indian_Cities_2.dtypes
+
+Indian_Cities_2.isna().sum()
+
+Indian_Cities_2.sum()
+
+Indian_Cities_2.dropna(inplace=True)
+Indian_Cities_2.sum()
+
+
+Indian_Cities_2.isna().sum()
+
+Indian_Cities_2.set_index('Date',inplace=True)
+
+Indian_Cities_2.head()
+
